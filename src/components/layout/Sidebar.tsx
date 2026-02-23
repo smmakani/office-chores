@@ -1,4 +1,4 @@
-import { Calendar, ClipboardList, Users, History } from 'lucide-react';
+import { Calendar, ClipboardList, Users, History, Mail } from 'lucide-react';
 import { useStore } from '@/store';
 import { cn } from '@/lib/utils';
 import type { PageName } from '@/types';
@@ -8,6 +8,7 @@ const NAV_ITEMS: { page: PageName; label: string; icon: React.FC<{ className?: s
   { page: 'chores', label: 'Chores', icon: ClipboardList },
   { page: 'members', label: 'Team', icon: Users },
   { page: 'history', label: 'History', icon: History },
+  { page: 'contact', label: 'Contact Us', icon: Mail },
 ];
 
 export function Sidebar() {

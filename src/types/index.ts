@@ -105,4 +105,4 @@ export interface ResolvedOccurrence {
 
 // ─── UI State ─────────────────────────────────────────────────────────────────
 
-export type PageName = 'calendar' | 'chores' | 'members' | 'history';
+export type PageName = 'calendar' | 'chores' | 'members' | 'history' | 'contact';
