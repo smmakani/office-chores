@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+/* Reset body for full-height app */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100vh;
+}
+
+/* FullCalendar overrides */
+.fc {
+  font-family: inherit;
+  height: 100%;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.fc .fc-button {
+  background-color: white !important;
+  border-color: #d1d5db !important;
+  color: #374151 !important;
+  border-radius: 6px !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  padding: 0.35rem 0.75rem !important;
+  box-shadow: none !important;
+  text-transform: none !important;
+}
+
+.fc .fc-button:hover {
+  background-color: #f9fafb !important;
+  border-color: #9ca3af !important;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  background-color: #4f46e5 !important;
+  border-color: #4f46e5 !important;
+  color: white !important;
+}
+
+.fc .fc-daygrid-event {
+  border-radius: 4px;
+  border: none !important;
+  margin-bottom: 1px;
+}
+
+.fc .fc-event-main {
+  padding: 0;
+}
+
+.fc .fc-col-header-cell {
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  background-color: #f9fafb;
+  padding: 8px 0;
+}
+
+.fc .fc-daygrid-day-number {
+  font-size: 0.875rem;
+  color: #374151;
+  padding: 6px 8px;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+  background-color: #eef2ff !important;
+}
+
+.fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+  background-color: #4f46e5;
+  color: white;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.fc .fc-scrollgrid {
+  border-color: #e5e7eb;
+}
+
+.fc .fc-scrollgrid td,
+.fc .fc-scrollgrid th {
+  border-color: #e5e7eb;
+}
+
+.fc-wrapper {
+  min-height: 0;
+}
