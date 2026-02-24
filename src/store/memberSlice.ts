@@ -25,6 +25,11 @@ export function createMemberSlice(
       set((state) => {
         state.teamMembers.push(member);
       });
+      fetch('/api/members', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(member),
+      }).catch(console.error);
       return member;
     },
 
@@ -32,6 +37,7 @@ export function createMemberSlice(
       set((state) => {
         state.teamMembers = state.teamMembers.filter((m) => m.id !== id);
       });
+      fetch(`/api/members/${id}`, { method: 'DELETE' }).catch(console.error);
     },
   };
 }

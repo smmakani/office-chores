@@ -35,6 +35,11 @@ export function createChoreSlice(
       set((state) => {
         state.choreTemplates.push(template);
       });
+      fetch('/api/chores', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(template),
+      }).catch(console.error);
       return template;
     },
 
@@ -47,6 +52,11 @@ export function createChoreSlice(
           });
         }
       });
+      fetch(`/api/chores/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }).catch(console.error);
     },
 
     deleteChoreTemplate(id) {
@@ -54,6 +64,7 @@ export function createChoreSlice(
         const t = state.choreTemplates.find((t) => t.id === id);
         if (t) t.deletedAt = new Date().toISOString();
       });
+      fetch(`/api/chores/${id}`, { method: 'DELETE' }).catch(console.error);
     },
   };
 }

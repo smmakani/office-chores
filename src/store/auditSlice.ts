@@ -42,6 +42,11 @@ export function createAuditSlice(
           state.auditLog = state.auditLog.slice(0, AUDIT_LOG_MAX);
         }
       });
+      fetch('/api/audit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newEntry),
+      }).catch(console.error);
     },
   };
 }

@@ -8,6 +8,16 @@ export interface OccurrenceSlice {
   skipOccurrence: (key: OccurrenceKey, templateId: ID, originalDate: string) => void;
 }
 
+function syncOccurrence(key: OccurrenceKey, get: () => OccurrenceSlice) {
+  const override = get().occurrenceOverrides[key];
+  if (!override) return;
+  fetch(`/api/occurrences/${encodeURIComponent(key)}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(override),
+  }).catch(console.error);
+}
+
 export function createOccurrenceSlice(
   set: (fn: (state: OccurrenceSlice) => void) => void,
   get: () => OccurrenceSlice
@@ -31,11 +41,12 @@ export function createOccurrenceSlice(
           completionNote: existing?.completionNote ?? '',
         };
       });
+      syncOccurrence(key, get);
     },
 
     rescheduleOccurrence(key, templateId, originalDate, newDate) {
+      const existing = get().occurrenceOverrides[key];
       set((state) => {
-        const existing = state.occurrenceOverrides[key];
         state.occurrenceOverrides[key] = {
           key,
           templateId,
@@ -48,11 +59,12 @@ export function createOccurrenceSlice(
           completionNote: existing?.completionNote ?? '',
         };
       });
+      syncOccurrence(key, get);
     },
 
     skipOccurrence(key, templateId, originalDate) {
+      const existing = get().occurrenceOverrides[key];
       set((state) => {
-        const existing = state.occurrenceOverrides[key];
         state.occurrenceOverrides[key] = {
           key,
           templateId,
@@ -65,6 +77,7 @@ export function createOccurrenceSlice(
           completionNote: existing?.completionNote ?? '',
         };
       });
+      syncOccurrence(key, get);
     },
   };
 }
