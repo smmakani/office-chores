@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
+import { API_BASE } from '@/lib/api';
 import { createMemberSlice, type MemberSlice } from './memberSlice';
 import { createChoreSlice, type ChoreSlice } from './choreSlice';
 import { createOccurrenceSlice, type OccurrenceSlice } from './occurrenceSlice';
@@ -37,8 +38,12 @@ export const useStore = create<StoreState>()(
     async initStore() {
       set((state) => { state.isLoading = true; state.initError = null; });
       try {
-        const res = await fetch('/api/init');
+        const res = await fetch(`${API_BASE}/api/init`);
         if (!res.ok) throw new Error(`Server returned ${res.status}`);
+        const ct = res.headers.get('content-type') ?? '';
+        if (!ct.includes('application/json')) {
+          throw new Error('Backend unreachable (is the server running?)');
+        }
         const data = await res.json() as {
           members: StoreState['teamMembers'];
           chores: StoreState['choreTemplates'];

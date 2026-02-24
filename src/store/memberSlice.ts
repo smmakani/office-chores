@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
 import { getColorForIndex } from '@/lib/colors';
+import { API_BASE } from '@/lib/api';
 import type { TeamMember } from '@/types';
 
 export interface MemberSlice {
@@ -25,7 +26,7 @@ export function createMemberSlice(
       set((state) => {
         state.teamMembers.push(member);
       });
-      fetch('/api/members', {
+      fetch(`${API_BASE}/api/members`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(member),
@@ -37,7 +38,7 @@ export function createMemberSlice(
       set((state) => {
         state.teamMembers = state.teamMembers.filter((m) => m.id !== id);
       });
-      fetch(`/api/members/${id}`, { method: 'DELETE' }).catch(console.error);
+      fetch(`${API_BASE}/api/members/${id}`, { method: 'DELETE' }).catch(console.error);
     },
   };
 }

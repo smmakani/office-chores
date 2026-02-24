@@ -1,4 +1,5 @@
 import { nanoid } from 'nanoid';
+import { API_BASE } from '@/lib/api';
 import type { AuditLogEntry, AuditAction, ID, OccurrenceKey } from '@/types';
 
 const AUDIT_LOG_MAX = 1000;
@@ -42,7 +43,7 @@ export function createAuditSlice(
           state.auditLog = state.auditLog.slice(0, AUDIT_LOG_MAX);
         }
       });
-      fetch('/api/audit', {
+      fetch(`${API_BASE}/api/audit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newEntry),

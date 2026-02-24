@@ -1,4 +1,5 @@
 import { nanoid } from 'nanoid';
+import { API_BASE } from '@/lib/api';
 import type { ChoreTemplate, RecurrenceRule } from '@/types';
 
 export interface ChoreSlice {
@@ -35,7 +36,7 @@ export function createChoreSlice(
       set((state) => {
         state.choreTemplates.push(template);
       });
-      fetch('/api/chores', {
+      fetch(`${API_BASE}/api/chores`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(template),
@@ -52,7 +53,7 @@ export function createChoreSlice(
           });
         }
       });
-      fetch(`/api/chores/${id}`, {
+      fetch(`${API_BASE}/api/chores/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -64,7 +65,7 @@ export function createChoreSlice(
         const t = state.choreTemplates.find((t) => t.id === id);
         if (t) t.deletedAt = new Date().toISOString();
       });
-      fetch(`/api/chores/${id}`, { method: 'DELETE' }).catch(console.error);
+      fetch(`${API_BASE}/api/chores/${id}`, { method: 'DELETE' }).catch(console.error);
     },
   };
 }

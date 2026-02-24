@@ -1,4 +1,5 @@
 import { makeOccurrenceKey } from '@/lib/occurrenceKey';
+import { API_BASE } from '@/lib/api';
 import type { OccurrenceOverride, OccurrenceKey, ID } from '@/types';
 
 export interface OccurrenceSlice {
@@ -11,7 +12,7 @@ export interface OccurrenceSlice {
 function syncOccurrence(key: OccurrenceKey, get: () => OccurrenceSlice) {
   const override = get().occurrenceOverrides[key];
   if (!override) return;
-  fetch(`/api/occurrences/${encodeURIComponent(key)}`, {
+  fetch(`${API_BASE}/api/occurrences/${encodeURIComponent(key)}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(override),
