@@ -5,11 +5,17 @@ dotenv.config();
 
 const { Pool } = pg;
 
+// Internal Render hostnames (no TLD) don't need SSL.
+// External hostnames contain ".render.com" and do.
+function sslConfig(url: string) {
+  return url.includes('.render.com') ? { rejectUnauthorized: false } : false;
+}
+
 export const pool = new Pool(
   process.env.DATABASE_URL
     ? {
         connectionString: process.env.DATABASE_URL,
-        ssl: { rejectUnauthorized: false }, // required for Render managed Postgres
+        ssl: sslConfig(process.env.DATABASE_URL),
       }
     : {
         host: process.env.POSTGRES_HOST ?? 'localhost',
