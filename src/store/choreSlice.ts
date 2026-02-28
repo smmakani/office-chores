@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { API_BASE } from '@/lib/api';
+import { supabase } from '@/lib/supabase';
 import type { ChoreTemplate, RecurrenceRule } from '@/types';
 
 export interface ChoreSlice {
@@ -36,11 +36,7 @@ export function createChoreSlice(
       set((state) => {
         state.choreTemplates.push(template);
       });
-      fetch(`${API_BASE}/api/chores`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(template),
-      }).catch(console.error);
+      supabase.from('chore_templates').insert(template).then(undefined, console.error);
       return template;
     },
 
@@ -53,11 +49,7 @@ export function createChoreSlice(
           });
         }
       });
-      fetch(`${API_BASE}/api/chores/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      }).catch(console.error);
+      supabase.from('chore_templates').update(data).eq('id', id).then(undefined, console.error);
     },
 
     deleteChoreTemplate(id) {
@@ -65,7 +57,7 @@ export function createChoreSlice(
         const t = state.choreTemplates.find((t) => t.id === id);
         if (t) t.deletedAt = new Date().toISOString();
       });
-      fetch(`${API_BASE}/api/chores/${id}`, { method: 'DELETE' }).catch(console.error);
+      supabase.from('chore_templates').update({ deleted_at: new Date().toISOString() }).eq('id', id).then(undefined, console.error);
     },
   };
 }

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Bash(echo OK:*)",
+      "Bash(cd /c/Users/shaki/Projects/claude-apps/office-chores && git add server/db.ts && git commit -m \"$\\(cat <<'EOF'\nFix SSL config for Render internal Postgres connection\n\nInternal Render hostnames have no TLD and don't require SSL.\nOnly apply SSL \\(rejectUnauthorized:false\\) when the DATABASE_URL\ncontains '.render.com' \\(external connection string\\).\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git push 2>&1)",
+      "mcp__ide__getDiagnostics",
+      "mcp__ide__executeCode",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}

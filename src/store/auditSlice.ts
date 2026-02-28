@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { API_BASE } from '@/lib/api';
+import { supabase } from '@/lib/supabase';
 import type { AuditLogEntry, AuditAction, ID, OccurrenceKey } from '@/types';
 
 const AUDIT_LOG_MAX = 1000;
@@ -43,11 +43,7 @@ export function createAuditSlice(
           state.auditLog = state.auditLog.slice(0, AUDIT_LOG_MAX);
         }
       });
-      fetch(`${API_BASE}/api/audit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newEntry),
-      }).catch(console.error);
+      supabase.from('audit_log').insert(newEntry).then(undefined, console.error);
     },
   };
 }

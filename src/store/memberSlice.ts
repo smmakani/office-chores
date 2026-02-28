@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 import { getColorForIndex } from '@/lib/colors';
-import { API_BASE } from '@/lib/api';
+import { supabase } from '@/lib/supabase';
 import type { TeamMember } from '@/types';
 
 export interface MemberSlice {
@@ -26,11 +26,7 @@ export function createMemberSlice(
       set((state) => {
         state.teamMembers.push(member);
       });
-      fetch(`${API_BASE}/api/members`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(member),
-      }).catch(console.error);
+      supabase.from('team_members').insert(member).then(undefined, console.error);
       return member;
     },
 
@@ -38,7 +34,7 @@ export function createMemberSlice(
       set((state) => {
         state.teamMembers = state.teamMembers.filter((m) => m.id !== id);
       });
-      fetch(`${API_BASE}/api/members/${id}`, { method: 'DELETE' }).catch(console.error);
+      supabase.from('team_members').delete().eq('id', id).then(undefined, console.error);
     },
   };
 }

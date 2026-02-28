@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import { API_BASE } from '@/lib/api';
+import { supabase } from '@/lib/supabase';
 import { createMemberSlice, type MemberSlice } from './memberSlice';
 import { createChoreSlice, type ChoreSlice } from './choreSlice';
 import { createOccurrenceSlice, type OccurrenceSlice } from './occurrenceSlice';
 import { createAuditSlice, type AuditSlice } from './auditSlice';
-import type { PageName } from '@/types';
+import type { PageName, OccurrenceOverride } from '@/types';
 
 interface UISlice {
   actingMemberId: string | null;
@@ -38,23 +38,38 @@ export const useStore = create<StoreState>()(
     async initStore() {
       set((state) => { state.isLoading = true; state.initError = null; });
       try {
-        const res = await fetch(`${API_BASE}/api/init`);
-        if (!res.ok) throw new Error(`Server returned ${res.status}`);
-        const ct = res.headers.get('content-type') ?? '';
-        if (!ct.includes('application/json')) {
-          throw new Error('Backend unreachable (is the server running?)');
+        const [membersRes, choresRes, occurrencesRes, auditRes] = await Promise.all([
+          supabase.from('team_members').select('*').order('created_at'),
+          supabase.from('chore_templates').select('*').order('created_at'),
+          supabase.from('occurrence_overrides').select('*'),
+          supabase.from('audit_log').select('*').order('timestamp', { ascending: false }).limit(1000),
+        ]);
+
+        if (membersRes.error) throw membersRes.error;
+        if (choresRes.error) throw choresRes.error;
+        if (occurrencesRes.error) throw occurrencesRes.error;
+        if (auditRes.error) throw auditRes.error;
+
+        const occurrences: Record<string, unknown> = {};
+        for (const row of occurrencesRes.data ?? []) {
+          occurrences[row.key] = row;
         }
-        const data = await res.json() as {
-          members: StoreState['teamMembers'];
-          chores: StoreState['choreTemplates'];
-          occurrences: StoreState['occurrenceOverrides'];
-          auditLog: StoreState['auditLog'];
-        };
+
         set((state) => {
-          state.teamMembers = data.members;
-          state.choreTemplates = data.chores;
-          state.occurrenceOverrides = data.occurrences;
-          state.auditLog = data.auditLog;
+          state.teamMembers = membersRes.data ?? [];
+          state.choreTemplates = (choresRes.data ?? []).map((t: Record<string, unknown>) => ({
+            id: t.id as string,
+            name: t.name as string,
+            description: t.description as string,
+            assigneeId: t.assigneeId as string | null ?? t.assignee_id as string | null ?? null,
+            recurrence: typeof t.recurrence === 'string' ? JSON.parse(t.recurrence) : t.recurrence,
+            startDate: t.startDate as string ?? t.start_date as string,
+            deletedAt: t.deletedAt as string | null ?? t.deleted_at as string | null ?? null,
+            createdAt: t.createdAt as string ?? t.created_at as string,
+            updatedAt: t.updatedAt as string ?? t.updated_at as string,
+          }));
+          state.occurrenceOverrides = occurrences as Record<string, OccurrenceOverride>;
+          state.auditLog = auditRes.data ?? [];
           state.isLoading = false;
         });
       } catch (err) {
